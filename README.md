@@ -62,10 +62,24 @@ Windows 标题栏，紧挨着「应用」「编辑」的右侧。点击行为：
 set ELECTRON_RUN_AS_NODE=1
 "C:\D\software\DeepSeek Harness\DeepSeek Harness.exe" --expose-internals ^
   "C:\D\software\DeepSeek Harness\resources\app.asar\dsh\node_modules\@deepseek-ai\dsh-desktop-host\lib\cli.js" ^
-  plugin --profile desktop add github:csuwzw/dsh-restart
+  plugin --profile desktop add https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0
 ```
 
-把路径换成你自己的安装目录。不需要 git：pnpm 解析 `github:owner/repo` 时直接下载 codeload 的源码 tarball，不跑 `git clone`。
+把路径换成你自己的安装目录。**注意 `github:csuwzw/dsh-restart` 这种写法需要 git**：pnpm 会先跑
+`git ls-remote https://github.com/csuwzw/dsh-restart.git HEAD` 去解析 ref，机器上没有 git 就直接失败
+（`'git' 不是内部或外部命令`）。上面的 codeload tarball URL 不需要 git，它就是一个普通压缩包地址。
+
+三种写法在**没有 git** 的 Windows 上实测（用桌面版 CLI，空 profile）：
+
+| 写法 | 结果 |
+| --- | --- |
+| `github:csuwzw/dsh-restart` | 失败，`git ls-remote` 找不到 git |
+| `github:csuwzw/dsh-restart#main` / `#v1.0.0` | 失败，同上（任何 ref 名都会触发 `ls-remote`） |
+| `github:csuwzw/dsh-restart#<40 位 commit sha>` | 成功 |
+| `https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0` | 成功 |
+| `https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/heads/main` | 成功 |
+
+想固定版本就用 tag 形式的 codeload URL，想跟最新就用 `refs/heads/main`（代价是版本不再可复现）。
 
 装完重启一次（或直接用刚装上的按钮）。
 
