@@ -1,0 +1,54 @@
+{
+  "name": "dsh-restart",
+  "version": "1.0.0",
+  "description": "One-click restart for DeepSeek Harness: a title-bar button that restarts the desktop app so freshly installed plugins take effect.",
+  "type": "module",
+  "main": "./index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csuwzw/dsh-restart.git"
+  },
+  "homepage": "https://github.com/csuwzw/dsh-restart#readme",
+  "bugs": {
+    "url": "https://github.com/csuwzw/dsh-restart/issues"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "restart.ps1",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md",
+    "README_EN.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "os": [
+    "win32"
+  ],
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "dsh-bundle",
+    "dsh-client",
+    "restart",
+    "relaunch",
+    "windows"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  }
+}
