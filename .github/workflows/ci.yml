@@ -1,0 +1,69 @@
+name: CI
+
+# 本插件是纯源码分发、无构建步骤，所以 CI 只做三件事：
+#   1. 宿主端与客户端产物的语法检查
+#   2. 客户端离线自测（假 DOM，不需要浏览器）
+#   3. 守住 restart.ps1 的 UTF-8 BOM —— PowerShell 5.1 对无 BOM 文件按系统 ANSI
+#      代码页解码，脚本里的中文注释会崩坏成词法错误。这条最容易被重写文件时弄丢。
+#
+# 跑在 windows-latest 上：插件本身仅支持 Windows，用 ubuntu 跑会给出「通过」的
+# 假信号（脚本里那些 WMI / conhost / taskkill 调用根本不会被检查到）。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 语法检查
+        run: |
+          node --check index.js
+          node --check client.js
+          node --check client.test.cjs
+
+      - name: 客户端离线自测
+        run: node client.test.cjs client.js
+
+      - name: restart.ps1 必须带 UTF-8 BOM
+        shell: pwsh
+        run: |
+          $bytes = [System.IO.File]::ReadAllBytes('restart.ps1')[0..2]
+          if ($bytes[0] -ne 0xEF -or $bytes[1] -ne 0xBB -or $bytes[2] -ne 0xBF) {
+            throw "restart.ps1 首三字节不是 EF BB BF，PowerShell 5.1 会把中文注释解码坏。"
+          }
+
+      - name: restart.ps1 语法可解析
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path restart.ps1), [ref]$null, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Host $_ }
+            throw "restart.ps1 有 $($errors.Count) 处语法错误。"
+          }
+
+      - name: package.json 声明完整
+        shell: pwsh
+        run: |
+          $pkg = Get-Content package.json -Raw | ConvertFrom-Json
+          $missing = @()
+          if (-not $pkg.dsh.bundle.patch) { $missing += 'dsh.bundle.patch' }
+          if ($pkg.dsh.client.platform -ne 'web') { $missing += 'dsh.client.platform' }
+          if (-not $pkg.exports.'./client') { $missing += 'exports["./client"]' }
+          if (-not $pkg.main) { $missing += 'main' }
+          if ($missing.Count -gt 0) { throw "package.json 缺少：$($missing -join ', ')" }
+          Write-Host "声明完整，版本 $($pkg.version)"
