@@ -1,0 +1,20 @@
+# 默认按内容判定文本/二进制，仓库内统一 LF 行尾。
+* text=auto eol=lf
+
+# 明确标出文本类型，便于 diff 与合并。
+*.js    text
+*.cjs   text
+*.mjs   text
+*.json  text
+*.yml   text
+*.md    text
+*.svg   text
+
+# restart.ps1 首字节必须是 UTF-8 BOM（PowerShell 5.1 否则按系统 ANSI 代码页解码，
+# 脚本里的中文注释会崩坏）。git 不会增删 BOM，这里显式声明为文本以免被当作二进制。
+restart.ps1  text
+
+# 图片按二进制处理，不做行尾转换。
+*.png binary
+*.jpg binary
+*.ico binary
