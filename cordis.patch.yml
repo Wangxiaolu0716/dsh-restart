@@ -1,0 +1,8 @@
+# 作为 profile bundle 挂载 dsh-restart 的宿主端。
+#
+# 一行 insert 即挂载宿主端；浏览器端由 package.json 的 dsh.client 声明，
+# 并绑定在 name 为裸包名的这一行上（子路径行不会携带半身）。
+# 路由 /api/dsh-restart/restart 与标题栏的「重启」按钮都由这个包提供。
+- insert:
+    - id: dsh-restart
+      name: "dsh-restart"
