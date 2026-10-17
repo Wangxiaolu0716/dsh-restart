@@ -63,10 +63,26 @@ The desktop app ships a CLI that may manage the `desktop` profile — `@deepseek
 set ELECTRON_RUN_AS_NODE=1
 "C:\D\software\DeepSeek Harness\DeepSeek Harness.exe" --expose-internals ^
   "C:\D\software\DeepSeek Harness\resources\app.asar\dsh\node_modules\@deepseek-ai\dsh-desktop-host\lib\cli.js" ^
-  plugin --profile desktop add github:csuwzw/dsh-restart
+  plugin --profile desktop add https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0
 ```
 
-Adjust the paths to your installation. Git is not required: when resolving `github:owner/repo`, pnpm downloads the codeload source tarball rather than running `git clone`.
+Adjust the paths to your installation. **Note that `github:csuwzw/dsh-restart` requires git**: pnpm first runs
+`git ls-remote https://github.com/csuwzw/dsh-restart.git HEAD` to resolve the ref, and fails outright when git
+is not on the machine (`'git' is not recognized as an internal or external command`). The codeload tarball URL
+above needs no git — it is an ordinary archive address.
+
+Measured on Windows **without git**, through the desktop CLI into an empty profile:
+
+| Spec | Result |
+| --- | --- |
+| `github:csuwzw/dsh-restart` | fails, `git ls-remote` cannot find git |
+| `github:csuwzw/dsh-restart#main` / `#v1.0.0` | fails, same (any ref name triggers `ls-remote`) |
+| `github:csuwzw/dsh-restart#<40-char commit sha>` | succeeds |
+| `https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0` | succeeds |
+| `https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/heads/main` | succeeds |
+
+Pin a version with the tag URL; track the newest commit with `refs/heads/main` (at the cost of a
+non-reproducible version).
 
 Restart once afterwards (or just use the button you just installed).
 
