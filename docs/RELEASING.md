@@ -88,8 +88,8 @@ git push origin v1.0.0
 
 没有 git 时用 GitHub 的 Release 页面手工创建 tag（`v<版本>`，与 `package.json` 一致），正文粘贴
 `docs/releases/v<版本>.md`。用户可以用
-`https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0` 装指定版本——注意不要用
-`github:csuwzw/dsh-restart#v1.0.0`，那需要机器上装了 git。
+`https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v<版本>` 装指定版本——注意不要用
+`github:csuwzw/dsh-restart#v<版本>`，那需要机器上装了 git。
 
 ## 7. 回滚一次发布
 
@@ -111,4 +111,5 @@ git push origin v1.0.0
 | 新增用户可见能力（新的按钮状态、新的安装方式） | minor |
 | 改路由路径、改日志格式、改 `dsh` 声明字段 | major |
 
-`1.0.0` 是本插件第一次对外发布，所以之前的迭代都并入了它。
+`1.0.0` 是本插件第一次对外发布，所以之前的迭代都并入了它；`1.0.1` 只修文档（README 里「安装不需要
+git」的说法不成立），插件代码逐字节未改，属于 patch。
