@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="dsh-restart">
+	<title>dsh-restart</title>
+	<defs>
+		<linearGradient id="badge" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0" stop-color="#4b6fff"/>
+			<stop offset="1" stop-color="#263146"/>
+		</linearGradient>
+	</defs>
+
+	<!-- 徽章底 -->
+	<rect x="4" y="4" width="120" height="120" rx="30" fill="url(#badge)"/>
+
+	<!-- 顺时针圆弧：从 θ=290° 绕 320° 到 θ=250°，缺口留在正上方 -->
+	<path d="M 75.29 33 A 33 33 0 1 1 52.71 33"
+		fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+
+	<!-- 箭头：位于缺口左沿，指向行进方向（右偏上 20°） -->
+	<polygon points="0,-11 0,11 15,0" transform="translate(52.71,33) rotate(-20)" fill="#ffffff"/>
+</svg>
