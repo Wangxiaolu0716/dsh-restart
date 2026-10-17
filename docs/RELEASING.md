@@ -79,15 +79,35 @@ token 需要 fine-grained PAT，仓库权限 **Contents: Read and write**。用�
 
 ## 6. 打 tag
 
-工具目前不打 tag。若已装 git，在仓库里执行：
+**不需要 git**：用 `tools/gh-release.mjs` 直接建 tag + Release（同一个 API 调用就能建 tag）：
 
 ```powershell
-git tag -a v1.0.0 -m "dsh-restart 1.0.0"
-git push origin v1.0.0
+node <工具目录>\gh-release.mjs <token 文件> csuwzw/dsh-restart v<版本> `
+  "dsh-restart <版本> — <一句话标题>" docs/releases/v<版本>.md
 ```
 
-没有 git 时用 GitHub 的 Release 页面手工创建 tag（`v<版本>`，与 `package.json` 一致），正文粘贴
-`docs/releases/v<版本>.md`。用户可以用
+`tag_name` 用 `v<版本>`，与 `package.json` 的 `version` 对应但带 `v` 前缀。Release 正文粘贴
+`docs/releases/v<版本>.md`。
+
+若已装 git，也可以走命令行：
+
+```powershell
+git tag -a v1.0.1 -m "dsh-restart 1.0.1"
+git push origin v1.0.1
+```
+
+**注意 tag 必须指向已经推送好的 main 顶端**：`gh-release.mjs` 传的是 `target_commitish: main`，所以
+先推送、后打 tag。推完再改文件会让 tag 落后于 main。
+
+打完后确认：
+
+```powershell
+# 应该 200，且 gzip=true
+node <工具目录>\gh-tarball.mjs csuwzw/dsh-restart v<版本>
+```
+
+再在空 profile 里用这个 tag 装一次（第 4 节的做法，地址换成 `refs/tags/v<版本>`），确认装出来的
+`package.json` 版本号与声明正确。用户可以用
 `https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v<版本>` 装指定版本——注意不要用
 `github:csuwzw/dsh-restart#v<版本>`，那需要机器上装了 git。
 
