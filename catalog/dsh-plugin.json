@@ -1,0 +1,62 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Yan-Zero/dsh-std/3df054302468d2091859db4b3bd079042d33f100/packages/manifest/schema/dsh-plugin-0.15.schema.json",
+  "manifestVersion": "0.15",
+  "id": "io.github.csuwzw.dsh-restart",
+  "name": "dsh-restart",
+  "version": "1.0.0",
+  "facets": {
+    "host": {
+      "entry": "index.js",
+      "apiVersion": "v1alpha1"
+    }
+  },
+  "license": "MIT",
+  "source": {
+    "repository": "https://github.com/csuwzw/dsh-restart"
+  },
+  "requires": {
+    "contracts": [
+      {
+        "apiVersion": "dsh.web-server/v1",
+        "kind": "WebServer"
+      }
+    ]
+  },
+  "permissions": [
+    {
+      "name": "dsh-restart.process-terminate",
+      "scope": "local",
+      "reason": "End the running DeepSeek Harness instance so a new one can take the single-instance lock"
+    },
+    {
+      "name": "dsh-restart.process-launch",
+      "scope": "local",
+      "reason": "Launch the replacement instance with the same executable and no arguments"
+    }
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "id": "dsh-restart.restart",
+        "title": "重启 DeepSeek Harness",
+        "description": "结束当前实例并拉起新实例，让新安装的插件生效"
+      }
+    ]
+  },
+  "compat": {
+    "hosts": [
+      "dsh-desktop"
+    ]
+  },
+  "x-restart-endpoint": {
+    "method": "POST",
+    "path": "/api/dsh-restart/restart",
+    "requiredHeaders": {
+      "content-type": "application/json",
+      "x-dsh-restart-action": "restart"
+    },
+    "loopbackOnly": true
+  },
+  "x-platform": "win32",
+  "x-log": "$DSH_HOME/logs/dsh-restart-plugin.log"
+}
