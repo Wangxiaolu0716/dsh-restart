@@ -87,7 +87,9 @@ git push origin v1.0.0
 ```
 
 没有 git 时用 GitHub 的 Release 页面手工创建 tag（`v<版本>`，与 `package.json` 一致），正文粘贴
-`docs/releases/v<版本>.md`。用户可以用 `github:csuwzw/dsh-restart#v1.0.0` 装指定版本。
+`docs/releases/v<版本>.md`。用户可以用
+`https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0` 装指定版本——注意不要用
+`github:csuwzw/dsh-restart#v1.0.0`，那需要机器上装了 git。
 
 ## 7. 回滚一次发布
 
@@ -95,9 +97,10 @@ git push origin v1.0.0
 
 1. 用旧版源码目录重跑 `push-to-github.mjs`
 2. 在 GitHub 上把旧 tag 重新设为 latest
-3. 已安装的用户重新执行 `add github:csuwzw/dsh-restart#<旧 tag>`，然后重启 DSH
+3. 已安装的用户重新执行
+   `add https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/<旧 tag>`，然后重启 DSH
 
-不要在旧 tag 上原地改文件——`github:owner/repo#tag` 是按 tag 解析的，改了 tag 会让已经装好的
+不要在旧 tag 上原地改文件——按 tag 解析的安装是按 tag 内容抓取的，改了 tag 会让已经装好的
 用户拿到不同内容。
 
 ## 版本号怎么定
