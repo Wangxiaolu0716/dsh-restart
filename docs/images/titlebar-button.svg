@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="720" height="300" role="img" aria-label="dsh-restart 标题栏按钮示意图">
+	<title>标题栏按钮示意图</title>
+	<style>
+		.t { font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; }
+		.mono { font-family: Consolas, "Cascadia Mono", monospace; }
+	</style>
+	<defs>
+		<linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0" stop-color="#2b2f3a"/>
+			<stop offset="1" stop-color="#23262f"/>
+		</linearGradient>
+		<linearGradient id="hot" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0" stop-color="#3a4152"/>
+			<stop offset="1" stop-color="#2f3542"/>
+		</linearGradient>
+	</defs>
+
+	<rect width="720" height="300" fill="#f6f7fb"/>
+
+	<text class="t" x="24" y="34" font-size="17" font-weight="600" fill="#263146">标题栏按钮的位置与两种状态</text>
+	<text class="t" x="24" y="56" font-size="12.5" fill="#6b7280">示意图，非屏幕截图。样式取自 preload 菜单条 shadow root 里的裸 button 规则，因此与「应用 / 编辑」天然一致。</text>
+
+	<!-- 状态一：常态 -->
+	<text class="t" x="24" y="94" font-size="12" font-weight="600" fill="#4b6fff">① 常态</text>
+	<rect x="24" y="104" width="672" height="46" rx="8" fill="url(#bar)"/>
+	<text class="t" x="46" y="133" font-size="14" fill="#c9ced9">应用</text>
+	<text class="t" x="96" y="133" font-size="14" fill="#c9ced9">编辑</text>
+	<rect x="140" y="112" width="72" height="30" rx="6" fill="none" stroke="#4b6fff" stroke-width="1.6" stroke-dasharray="4 3"/>
+	<text class="t" x="152" y="132" font-size="14" fill="#ffffff">重启</text>
+	<text class="t" x="228" y="133" font-size="12" fill="#8b93a5">← 插件追加的同级按钮</text>
+
+	<!-- 状态二：确认态 -->
+	<text class="t" x="24" y="188" font-size="12" font-weight="600" fill="#f0a441">② 第一次点击后（4 秒内不点自动撤销）</text>
+	<rect x="24" y="198" width="672" height="46" rx="8" fill="url(#bar)"/>
+	<text class="t" x="46" y="227" font-size="14" fill="#c9ced9">应用</text>
+	<text class="t" x="96" y="227" font-size="14" fill="#c9ced9">编辑</text>
+	<rect x="140" y="206" width="116" height="30" rx="6" fill="url(#hot)" stroke="#f0a441" stroke-width="1.6"/>
+	<text class="t" x="152" y="226" font-size="14" fill="#ffd699">确认重启？</text>
+	<text class="t" x="272" y="227" font-size="12" fill="#8b93a5">← 第二次点击才发请求</text>
+
+	<text class="t" x="24" y="278" font-size="12" fill="#6b7280">第三次状态：正在重启…（按钮禁用）。重启会终止正在运行的任务，而按钮位置太顺手，所以做成两次点击。</text>
+</svg>
