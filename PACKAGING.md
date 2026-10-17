@@ -6,7 +6,8 @@
 
 | 产物 | 谁用 | 是否需要网络 | 是否需要 git |
 | --- | --- | --- | --- |
-| GitHub 仓库（`github:` 源） | 常规安装 | 需要 | 不需要 |
+| GitHub 仓库（codeload tarball URL） | 常规安装 | 需要 | 不需要 |
+| GitHub 仓库（`github:` 源） | 装了 git 的机器 | 需要 | **需要** |
 | `dsh-restart-<版本>.tgz` | 内网、离线、固定版本 | 不需要 | 不需要 |
 | 一键安装包（ZIP，含 `install.ps1`） | 不想敲命令的 Windows 用户 | 不需要 | 不需要 |
 | 源码目录直接放置 | 开发调试 | 不需要 | 不需要 |
@@ -17,7 +18,7 @@ npm 上的 `dsh-restart` 是**别人的包**（作者 `anweat`，`https://github
 主题同样是 DSH 重启插件）。所以：
 
 - **不要**发布到 npm，也**不要**让用户执行 `add dsh-restart`——那会装到别人的包上。
-- 分发一律走 `github:csuwzw/dsh-restart`、tgz 文件或一键安装包。
+- 分发一律走 codeload tarball URL、tgz 文件或一键安装包。
 
 如果将来要发 npm，先改名（`dsh-restart-plugin` 与 `dsh-one-click-restart` 在撰写时可用），
 并同步改 `package.json` 的 `name` 与 `dsh` 字段。
@@ -71,18 +72,32 @@ New-Item -ItemType Directory -Force $tmp | Out-Null
 
 ## 四、从 GitHub 安装
 
+**用 codeload tarball URL，不要用 `github:` 简写**——后者在没有 git 的机器上直接失败：
+
 ```
 set ELECTRON_RUN_AS_NODE=1
 "<DSH 安装目录>\DeepSeek Harness.exe" --expose-internals ^
   "<DSH 安装目录>\resources\app.asar\dsh\node_modules\@deepseek-ai\dsh-desktop-host\lib\cli.js" ^
-  plugin --profile desktop add github:csuwzw/dsh-restart
+  plugin --profile desktop add https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0
 ```
 
-不需要 git：pnpm 解析 `github:owner/repo` 时直接下载 codeload 的源码 tarball，不跑 `git clone`
-（见 dshmarket 的 `lib/accelerate.js`）。
+`github:owner/repo` 会先让 pnpm 跑 `git ls-remote <url> HEAD` 解析 ref；机器上没有 git 时 pnpm 报
+`Command failed with exit code 1: git ls-remote "https://github.com/csuwzw/dsh-restart.git" HEAD "HEAD^{}"`
+并退出 1。加 `#main`、`#v1.0.0` 也一样——**任何 ref 名都会走 `ls-remote`**，所以「不需要 git」的说法只对
+commit sha 形式和直接的 codeload URL 成立（`dshmarket/lib/accelerate.js` 会把裸 `github:` 重写成
+`github:owner/repo#<sha>` 来规避这一点，但那条路径只在市场自己的安装通道里生效）。
 
-指定版本用 `github:csuwzw/dsh-restart#v1.0.0` 或 commit sha。国内网络可能连不上
-`codeload.github.com`，新电脑上 `add github:...` 卡住通常就是这个原因——改用 tgz 或一键安装包。
+实测矩阵（桌面版 CLI，空 profile，本机无 git）：
+
+| 写法 | 结果 |
+| --- | --- |
+| `github:csuwzw/dsh-restart` | 失败 |
+| `github:csuwzw/dsh-restart#main` / `#v1.0.0` | 失败 |
+| `github:csuwzw/dsh-restart#87a3945764a30d07298b627a93eefdcc56aee1bb` | 成功 |
+| `https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/tags/v1.0.0` | 成功 |
+| `https://codeload.github.com/csuwzw/dsh-restart/tar.gz/refs/heads/main` | 成功 |
+
+国内网络可能连不上 `codeload.github.com`，新电脑上安装卡住通常就是这个原因——改用 tgz 或一键安装包。
 
 ## 五、发布检查清单
 
