@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" width="720" height="360" role="img" aria-label="dsh-restart 重启链路示意图">
+	<title>重启链路示意图</title>
+	<style>
+		.t { font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; }
+		.mono { font-family: Consolas, "Cascadia Mono", monospace; }
+	</style>
+
+	<rect width="720" height="360" fill="#f6f7fb"/>
+	<text class="t" x="24" y="34" font-size="17" font-weight="600" fill="#263146">重启链路：为什么脚本必须由 WMI 创建</text>
+	<text class="t" x="24" y="56" font-size="12.5" fill="#6b7280">左侧是浏览器与宿主，中间那道虚线是 job object 边界——从插件里普通 spawn 的进程会被旧实例一起带走。</text>
+
+	<!-- job object 边界 -->
+	<rect x="24" y="76" width="404" height="212" rx="10" fill="#eef1f8" stroke="#4b6fff" stroke-width="1.4" stroke-dasharray="6 4"/>
+	<text class="t" x="38" y="96" font-size="11.5" font-weight="600" fill="#4b6fff">job object（旧实例一退出，这里全部被终止）</text>
+
+	<!-- 按钮 -->
+	<rect x="44" y="112" width="152" height="52" rx="8" fill="#ffffff" stroke="#c9ced9"/>
+	<text class="t" x="58" y="134" font-size="13" font-weight="600" fill="#263146">标题栏「重启」按钮</text>
+	<text class="t" x="58" y="152" font-size="11.5" fill="#6b7280">client.js，两次点击</text>
+
+	<!-- 路由 -->
+	<rect x="228" y="112" width="180" height="52" rx="8" fill="#ffffff" stroke="#c9ced9"/>
+	<text class="t" x="242" y="134" font-size="13" font-weight="600" fill="#263146">POST /api/dsh-restart</text>
+	<text class="t" x="242" y="152" font-size="11.5" fill="#6b7280">index.js，仅回环 + 动作头</text>
+
+	<line x1="196" y1="138" x2="228" y2="138" stroke="#4b6fff" stroke-width="1.6" marker-end="url(#a)"/>
+	<defs>
+		<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+			<path d="M 0 0 L 10 5 L 0 10 z" fill="#4b6fff"/>
+		</marker>
+		<marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+			<path d="M 0 0 L 10 5 L 0 10 z" fill="#f0a441"/>
+		</marker>
+	</defs>
+
+	<!-- WMI 调用 -->
+	<rect x="228" y="196" width="180" height="52" rx="8" fill="#ffffff" stroke="#c9ced9"/>
+	<text class="t" x="242" y="218" font-size="13" font-weight="600" fill="#263146">Win32_Process.Create</text>
+	<text class="t" x="242" y="236" font-size="11.5" fill="#6b7280">EncodedCommand</text>
+	<line x1="318" y1="164" x2="318" y2="196" stroke="#4b6fff" stroke-width="1.6" marker-end="url(#a)"/>
+
+	<!-- 出界 -->
+	<line x1="408" y1="222" x2="470" y2="222" stroke="#f0a441" stroke-width="1.8" marker-end="url(#b)"/>
+	<text class="t" x="414" y="214" font-size="11" fill="#f0a441">脱离 job</text>
+
+	<!-- WMI 服务 -->
+	<rect x="470" y="76" width="226" height="72" rx="10" fill="#fff8ec" stroke="#f0a441" stroke-width="1.4"/>
+	<text class="t" x="484" y="100" font-size="12.5" font-weight="600" fill="#8a5a10">WmiPrvSE.exe → svchost.exe</text>
+	<text class="t" x="484" y="120" font-size="11.5" fill="#8a5a10">父链在 services.exe 一侧</text>
+	<text class="t" x="484" y="138" font-size="11.5" fill="#8a5a10">sessionId=1，仍在交互会话</text>
+
+	<line x1="583" y1="148" x2="583" y2="182" stroke="#f0a441" stroke-width="1.6" marker-end="url(#b)"/>
+
+	<!-- 脚本 -->
+	<rect x="470" y="182" width="226" height="106" rx="10" fill="#ffffff" stroke="#c9ced9"/>
+	<text class="t" x="484" y="204" font-size="12.5" font-weight="600" fill="#263146">conhost.exe --headless</text>
+	<text class="t" x="484" y="222" font-size="11.5" fill="#6b7280">powershell -File restart.ps1</text>
+	<text class="mono" x="484" y="246" font-size="11" fill="#4b6fff">taskkill /PID &lt;旧&gt; /T /F</text>
+	<text class="mono" x="484" y="264" font-size="11" fill="#4b6fff">等旧 pid 消失 → 清端口 → 拉起新实例</text>
+	<text class="mono" x="484" y="282" font-size="11" fill="#2f6f4f">verify: 端口重新监听 = 成功</text>
+
+	<text class="t" x="24" y="320" font-size="12" fill="#6b7280">新实例拿不到单实例锁就只会聚焦旧窗口，所以脚本必须先等旧 pid 消失，再拉起新的。</text>
+	<text class="t" x="24" y="340" font-size="12" fill="#6b7280">Host 无需特殊处理：它与 Electron 之间是 IPC，Electron 一退出 Host 收到 disconnect 就自行关闭并释放端口。</text>
+</svg>
